@@ -1,0 +1,22 @@
+name: Deploy Images to GHCR
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  push-store-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+      - name: Build and Push
+        run: |
+          docker build . --tag ghcr.io/circleous/httpd:latest
+          docker push ghcr.io/circleous/httpd:latest
